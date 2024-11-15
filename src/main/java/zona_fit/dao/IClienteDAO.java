@@ -6,10 +6,9 @@ import java.util.List;
 
 public interface IClienteDAO {
 
-    List<Cliente> listarClientes();
-    boolean findClienteById(Cliente cliente);
-    boolean addCliente(Cliente cliente);
-    boolean updateCliente(Cliente cliente);
-    boolean deleteCliente(Cliente cliente);
-    Cliente findByIdNumber(int id);
+    List<Cliente> findAll();
+    boolean findById(Cliente cliente);
+    boolean add(Cliente cliente);
+    boolean update(Cliente cliente);
+    boolean delete(Cliente cliente);
 }

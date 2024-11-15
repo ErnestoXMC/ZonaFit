@@ -1,6 +1,5 @@
 package zona_fit.dao;
 
-import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import zona_fit.conexion.Conexion;
 import zona_fit.dominio.Cliente;
 
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class ClienteDAO implements IClienteDAO{
     @Override
-    public List<Cliente> listarClientes() {
+    public List<Cliente> findAll() {
         ArrayList<Cliente> clientes = new ArrayList<>();
 
         PreparedStatement ps;
@@ -48,7 +47,7 @@ public class ClienteDAO implements IClienteDAO{
     }
 
     @Override
-    public boolean findClienteById(Cliente cliente) {
+    public boolean findById(Cliente cliente) {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = Conexion.getConexion();
@@ -73,48 +72,71 @@ public class ClienteDAO implements IClienteDAO{
     }
 
     @Override
-    public boolean addCliente(Cliente cliente) {
-        return false;
-    }
-
-    @Override
-    public boolean updateCliente(Cliente cliente) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteCliente(Cliente cliente) {
-        return false;
-    }
-
-    @Override
-    public Cliente findByIdNumber(int id) {
-        Cliente cliente = null;
+    public boolean add(Cliente cliente) {
         PreparedStatement ps;
-        ResultSet rs;
         Connection con = Conexion.getConexion();
-        String query = "SELECT * FROM cliente WHERE id = ?";
+        String query = "INSERT INTO cliente (nombre, apellido, membresia) " + "VALUES (?, ?, ?)";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getApellido());
+            ps.setInt(3, cliente.getMembresia());
+
+            ps.execute();
+
+            con.close();
+            return true;
+
+        }catch (Exception e){
+            System.out.println("Error al agregar un cliente: " + e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(Cliente cliente) {
+        PreparedStatement ps;
+        Connection con = Conexion.getConexion();
+        String query = "UPDATE cliente SET nombre = ?, apellido = ?, membresia = ? WHERE id = ?";
 
         try {
             ps = con.prepareStatement(query);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
 
-            if(rs.next()){
-                cliente = new Cliente();
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getApellido());
+            ps.setInt(3, cliente.getMembresia());
+            ps.setInt(4, cliente.getId());
 
-                cliente.setId(rs.getInt("id"));
-                cliente.setNombre(rs.getString("nombre"));
-                cliente.setApellido(rs.getString("apellido"));
-                cliente.setMembresia(rs.getInt("membresia"));
-            }
+            ps.executeUpdate();
+            con.close();
+
+            return true;
+
+        }catch (Exception e){
+            System.out.println("Error al actualizar un cliente: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean delete(Cliente cliente) {
+        PreparedStatement ps;
+        Connection con = Conexion.getConexion();
+        String query = "DELETE FROM cliente WHERE id = ?";
+
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, cliente.getId());
+            ps.execute();
 
             con.close();
+
+            return true;
         }catch (Exception e){
-            cliente = null;
-            System.out.println("Error al buscar al cliente por su id: " + e.getMessage());
+            System.out.println("Error al eliminar el cliente: " + e.getMessage());
         }
-        return cliente;
+        return false;
     }
 
 }

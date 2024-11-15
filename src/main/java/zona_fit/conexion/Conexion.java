@@ -11,7 +11,7 @@ public class Conexion {
         String baseDatos = "zona_fit_db";
         String url = "jdbc:mysql://localhost:3306/" + baseDatos;
         String usuario = "root";
-        String password = "975179971";
+        String password = "";
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
